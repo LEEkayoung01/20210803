@@ -138,6 +138,54 @@ typedef로 구조체를 정의하면서 구조체이름을 생략할 수 있음.
       }; Person    // 구조체 별칭
       
     
+Unit 49. 구조체 포인터 사용하기
+1) 구조체 변수를 일일이 선언해서 사용하는 것보다는, 포인터에 메모리를 할당해서 사용하는 편이 효율적임.
+
+    int main()
+    {
+        struct Person p1 = malloc(sizeof(Person));
+        
+        // 화살표 연산자로 구조체 멤버에 접근하여 값 할당
+        strcpy(p1->names, "홍길동");    
+        p1->age = 30;   // 이는 (*p1).age = 30;과 같음.
+        
+        return 0;
+    }
+    
+    <주의>
+    - p1.name을 역참조-> *p1.name : 멤버의 역참조이지, 구조체변수의 역참조가 아님.
+    -                 -> *p1->name : 얘도 멤버의 역참조. 
+        
+            struct Data {
+                char c1;
+                int *numPtr;
+            };
+            
+            int main()
+            {
+                int num = 10;
+                struct Data d1;   // 구조체 변수 선언
+                struct Data *d2 = malloc(sizeof(struct Data));   // 구조체 포인터에 메모리 할당
+                
+                d1.numPtr = &num1;
+                d2->numptr = &num1;
+                
+                printf("%d\n", *d1.numPtr);   // 구조체 멤버를 역참조
+                printf("%d\n", d2->numPtr);   // 구조체 포인터의 멤버를 역참조
+                
+                d2->c1 = 'a';   
+                printf("%c\n", (*d2).c1);   // a, 구조체 포인터를 역참조하여 c1에 접근. d2->c1과 같은 의미임. 
+                                            // (*d2): d2가 가리키고 있는 주소이니, struct Data. pointer to struct Data에서 pointer to 가 제거되서 struct Data를 의미하게 됨.  
+                printf("%d\n", *(*d2).numPtr);   // 구조체 포인터를 역참조해서 numPtr에 접근한 뒤 다시 역참조.
+                                                // *d2->numPtr과 같음.
+                                                
+                free(d2);
+                
+                return 0;
+                
+            }
+                
+            
     
 Unit 51. 구조체 멤버 정렬 사용하기
 0)구조체
